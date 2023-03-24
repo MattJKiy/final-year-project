@@ -1,38 +1,32 @@
-from pandas_datareader import data
+import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-from arch import arch_model
-import seaborn
-import plotly.express as px
 
-seaborn.set_style("darkgrid")
-plt.rc("figure", figsize=(16, 6))
-plt.rc("savefig", dpi=90)
-plt.rc("font", family="sans-serif")
-plt.rc("font", size=14)
+# GARCH(1, 1) Simulation
+# Here we initialise n, alpha_0, alpha_1 and beta_1. We create an time series as a pandas array.
 
-START_DATE = '2010-01-01'
-END_DATE = '2021-01-01'
+n = 1000
+alpha_0 = 0.00001
+alpha_1 = 0.34
+beta_1 = 0.05
 
-STOCK = ['DIS']
+# Initialising the two arrays and assigning x_t[0] = 0 and sigma_t[0] = alpha_0
+x_t = np.array([0], dtype=float)
+sigma_t = np.array([alpha_0], dtype=float)
 
-stocks_data = data.DataReader(STOCK, 'yahoo', START_DATE, END_DATE)['Adj Close']
-returns = 100 * stocks_data.pct_change().dropna()  # calculate percentage logarithmic returns
-returns = returns[1:]  # removes first row
+for i in range(1, n):
+    sigma_value = alpha_0 + alpha_1 * np.square(x_t[i - 1]) + beta_1 * sigma_t[i - 1]
+    sigma_t = np.append(sigma_t, sigma_value)
 
-ax = returns.plot()
-xlim = ax.set_xlim(returns.index.min(), returns.index.max())
+    x_value = np.sqrt(sigma_t[i]) * np.random.normal(0, 1)
+    x_t = np.append(x_t, x_value)
 
+# The initial stock price is set to 10
 
-model = arch_model(returns[1:], mean="Constant", vol="GARCH", p=1, q=1)
-model_fit = model.fit()
-print(model_fit.summary())
-model_fit.plot(annualize="D")
+y_t = np.array([10], dtype=float)
+for i in range(1, n):
+    y_value = y_t[i - 1] * np.exp(x_t[i])
+    y_t = np.append(y_t, y_value)
+
+# Plot the stock price
+plt.plot(y_t)
 plt.show()
-
-stock_garch = returns.copy()
-stock_garch['cond_vol'] = pd.DataFrame(model_fit.conditional_volatility)
-garch_plot = px.line(stock_garch, title='GARCH model volatility of Daily Returns', width=1000, height=500)
-garch_plot.update_layout(showlegend=False)
-garch_plot.show()
-

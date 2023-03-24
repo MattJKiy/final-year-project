@@ -3,7 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.cm as cm
 from scipy.cluster.hierarchy import dendrogram, linkage
-
+# 1. Pick 10 stocks, gather time series of prices,
+# 2. calculate log-return, s.d. and kurtosis
+# 3. Create distance matrix dij of stocks or correlation matrix
+# 4. Represent with a heatmap or minimum spanning tree of dij
+# 5. Create GARCH simulation
+# 6. Plot analytical vs numerical solns
+# 7. Create MGARCH with two stocks
+# 8. plot 6. for 7.
 START_DATE = '2020-02-01'
 END_DATE = '2021-10-01'
 

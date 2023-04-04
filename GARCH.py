@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # GARCH(1, 1) Simulation
 # Here we initialise n, alpha_0, alpha_1 and beta_1. We create an time series as a pandas array.
 
-n = 1000
+n = 10000
 alpha_0 = 0.00001
 alpha_1 = 0.34
 beta_1 = 0.05
